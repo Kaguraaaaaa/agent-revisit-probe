@@ -1,0 +1,18 @@
+# Always-on, durable logs. Paid Render web plan + persistent disk (review charges before deploy).
+services:
+  - type: web
+    name: agent-revisit-probe
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --workers 1 --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /health
+    disk:
+      name: probe-events
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+      - key: ADMIN_TOKEN
+        generateValue: true
